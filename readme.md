@@ -1,10 +1,10 @@
 # Orthotwitter browser extension
 
 ## Features
-    [x] Remove the bulky header
-    [x] Remove analytics from each tweet
-    [ ] Enhance search experience
-    [ ] More
+- [x] Remove the bulky header
+- [x] Remove analytics from each tweet
+- [ ] Enhance search experience
+- [ ] More
 
 ## Installation
 Official version is pending review, follow `DEVELOP.md` for build instructions.
