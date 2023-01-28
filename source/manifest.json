@@ -1,8 +1,7 @@
 {
 	"name": "Orthotwitter",
-	"version": "0.0.0",
-	"description": "Mekes twitter behave correct",
-	"homepage_url": "https://github.com/fregante/browser-extension-template",
+	"version": "1.0.0",
+	"description": "Mekes twitter behave correct.",
 	"manifest_version": 3,
 	"minimum_chrome_version": "100",
 	"browser_specific_settings": {
@@ -11,40 +10,19 @@
 			"strict_min_version": "100.0"
 		}
 	},
-	"action": {
-		"default_popup": "popup.html",
-		"default_icon": "icon.png"
-	},
 	"icons": {
 		"128": "icon.png"
 	},
-	"permissions": [
-		"storage"
-	],
+	"permissions": [],
 	"host_permissions": [
-		"https://github.com/*",
 		"https://*.twitter.com/*"
 	],
 	"content_scripts": [
-		{
-			"matches": [ "https://github.com/fregante/browser-extension-template/*" ],
-			"js": [ "content.js" ],
-			"css": [ "content.css" ],
-			"run_at": "document_end"
-		},
 		{
 			"matches": [ "https://*.twitter.com/*" ],
 			"js": [ "content.js" ],
 			"css": [ "content.css" ],
 			"run_at": "document_end"
 		}
-	],
-	"options_ui": {
-		"browser_style": true,
-		"page": "options.html"
-	},
-	"background": {
-		"service_worker": "background.js",
-		"type": "module"
-	}
+	]
 }

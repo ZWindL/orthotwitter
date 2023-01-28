@@ -1,6 +1,6 @@
-import optionsStorage from './options-storage.js';
+// import optionsStorage from './options-storage.js';
 
-console.log('💈 Content script loaded for', chrome.runtime.getManifest().name);
+// console.log('💈 Content script loaded for', chrome.runtime.getManifest().name);
 
 // The function evaluate Xpath
 function $x(xpath) {
@@ -50,26 +50,21 @@ function waitForElmXpath(xpath) {
 }
 
 function huntXpath(xpath) {
-  console.log('###### hunting ', xpath);
   if ($x(xpath)) {
     const elmt = $x(xpath);
-    console.log('###### xpath found ', elmt);
     elmt.parentNode.removeChild(elmt);
   }
 }
 
 function huntSelector(selector, parentNode=document) {
-  console.log('###### hunting ', selector);
   if (parentNode.querySelector(selector)) {
     const elmt = parentNode.querySelector(selector);
-    console.log('###### selection found ', elmt);
     elmt.parentNode.removeChild(elmt);
   }
 }
 
 function observeXpath(xpathes) {
   const config = { attributes: true, childList: true, subtree: true };
-  console.log('###### observer config ', config);
   const observer = new MutationObserver(mutations => {
     mutations.forEach(mutation => {
       if (mutation.type === 'childList') {
@@ -84,7 +79,6 @@ function observeXpath(xpathes) {
 
 function observeSelector(selectors) {
   const config = { attributes: true, childList: true, subtree: true };
-  console.log('###### observer config ', config);
   const observer = new MutationObserver(mutations => {
     mutations.forEach(mutation => {
       if (mutation.type === 'childList') {
@@ -99,16 +93,61 @@ function observeSelector(selectors) {
 
 const xpathes = [
   '//main//h2[@role="heading"]/parent::div/parent::div/parent::div/parent::div/parent::div/parent::div',
+  // '//main//article/div/div/div/div[position()=2]/div[position()=2]/div[position()=2]/div[last()]/div/div[a/ends-with(@href, "/analytics")]',
+  '//main//article/div/div/div/div[position()=2]/div[position()=2]/div[position()=2]/div[last()]/div/div[a]',
 ];
 
 // function clean up UI
 async function cleanUpUI() {
-	console.log('########################### clean up UI');
   observeXpath(xpathes);
 }
 
+// insert a go-back button
+function insertBackButton() {
+  const config = { attributes: true, childList: true, subtree: true };
+  const observer = new MutationObserver(mutations => {
+    mutations
+      .filter(mut => mut.type === 'childList')
+      .filter(mut => mut.target.matches('header[role="banner"] nav[aria-label="Primary"]'))
+      .forEach(mut => {
+      // const nav = document.querySelector('header[role="banner"] > div > div > div > div nav[aria-label="Primary"]');
+      // const home = mutation.target.querySelector('a[href="/home"]');
+      // const profile = nav.querySelector('a[aria-label="Profile"]');
+      // clone the original home element
+      // const back = home.cloneNode(true);
+      // const path = home.querySelector('path');
+      const path = mut.target.querySelector('path');
+      path.setAttribute('d', 'M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z');
+      // remove profile entry and insert back button
+      // nav.removeChild(profile);
+      // nav.prepend(back);
+    })
+  });
+  const observerNav = new MutationObserver(mutations => {
+    mutations
+      .filter(mut => mut.type === 'childList')
+      .filter(mut => mut.target.matches('header[role="banner"] nav[aria-label="Primary"] a[href="/home"] div'))
+      .forEach(mut => {
+      // const nav = document.querySelector('header[role="banner"] > div > div > div > div nav[aria-label="Primary"]');
+      // const home = mutation.target.querySelector('a[href="/home"]');
+      // const profile = nav.querySelector('a[aria-label="Profile"]');
+      // clone the original home element
+      // const back = home.cloneNode(true);
+      // const path = home.querySelector('path');
+      const path = mut.target.querySelector('path');
+      path.setAttribute('d', 'M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z');
+      // remove profile entry and insert back button
+      // nav.removeChild(profile);
+      // nav.prepend(back);
+    })
+  });
+  observer.observe(document.body, config);
+  observerNav.observe(document.body, config)
+}
+
 async function init() {
-	const options = await optionsStorage.getAll();
+	// const options = await optionsStorage.getAll();
+  /*
 	const color = 'rgb(' + options.colorRed + ', ' + options.colorGreen + ',' + options.colorBlue + ')';
 	const text = options.text;
 	const notice = document.createElement('div');
@@ -117,10 +156,11 @@ async function init() {
 	notice.id = 'text-notice';
 	notice.style.border = '2px solid ' + color;
 	notice.style.color = color;
+  */
   await waitForElm('main[role="main"]');
-  console.log('########################### element found, clean up UI');
   // clean up
   cleanUpUI();
+  insertBackButton();
   // TODO: set default tab to following
   // TODO: remove the analytics button
   // TODO: make home button the go-back button
