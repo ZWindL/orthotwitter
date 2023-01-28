@@ -6,3 +6,8 @@
 	background: #fff;
 	z-index: 999999;
 }
+
+/* remove header 
+div:has( > div > div > div > h2[role="heading"]) {
+	display: none !important;
+}*/
